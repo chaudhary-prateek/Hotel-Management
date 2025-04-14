@@ -1,3 +1,4 @@
+'''
 pipeline {
     agent any
 
@@ -59,6 +60,75 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+}
+'''
+
+pipeline {
+    agent any
+    
+    environment {
+        AWS_REGION = 'us-east-1' // Change this to your desired AWS region
+        AWS_ACCOUNT_ID = 'your-aws-account-id'
+        ECR_REPOSITORY = 'your-ecr-repository-name'
+        IMAGE_NAME = 'your-image-name'
+        IMAGE_TAG = 'latest'
+    }
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/chaudhary-prateek/Hotel-Management.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG .'
+                }
+            }
+        }
+
+        stage('Authenticate with AWS') {
+            steps {
+                script {
+                    sh 'aws sts get-caller-identity'  // Verify credentials are working
+                    sh '''
+                    $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
+                    '''
+                }
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                script {
+                    sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG'
+                }
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                script {
+                    // You can trigger a task definition update or a service update here, e.g., using AWS CLI
+                    sh '''
+                    aws ecs update-service \
+                        --cluster your-cluster-name \
+                        --service your-service-name \
+                        --force-new-deployment \
+                        --region $AWS_REGION
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs() // Clean workspace after build
         }
     }
 }

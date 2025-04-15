@@ -1,68 +1,90 @@
-// This Jenkinsfile is for a Jenkins pipeline that builds a Docker image from a GitHub repository,
 pipeline {
     agent any
-    
+
     environment {
-        #AWS_REGION = 'us-east-1' // Change this to your desired AWS region
-        #AWS_ACCOUNT_ID = 'your-aws-account-id'
-        #ECR_REPOSITORY = 'your-ecr-repository-name'
-        #IMAGE_NAME = 'your-image-name'
-        #IMAGE_TAG = 'latest'
+        GIT_REPO = "https://github.com/chaudhary-prateek/Hotel-Management.git"
+        GIT_BRANCH = "main"
+        DOCKER_IMAGE = "hotel-management-app"
+        AWS_REGION = "us-east-1"
+        ECR_REPO = "hotel-management-app"
     }
 
     stages {
-        stage('Clone Code') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/chaudhary-prateek/Hotel-Management.git'
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPO}"
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG .'
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
                 }
             }
         }
 
-        #stage('Authenticate with AWS') {
-        #    steps {
-        #        script {
-        #            sh 'aws sts get-caller-identity'  // Verify credentials are working
-        #            sh '''
-        #            $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
-        #            '''
-        #        }
-        #    }
-        #}
-#
-        #stage('Push Image to ECR') {
-        #    steps {
-        #        script {
-        #            sh 'docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG'
-        #        }
-        #    }
-        #}
-#
-        #stage('Deploy to ECS') {
-        #    steps {
-        #        script {
-        #            // You can trigger a task definition update or a service update here, e.g., using AWS CLI
-        #            sh '''
-        #            aws ecs update-service \
-        #                --cluster your-cluster-name \
-        #                --service your-service-name \
-        #                --force-new-deployment \
-        #                --region $AWS_REGION
-        #            '''
-        #        }
-        #    }
-        #}
+        stage('AWS Authentication') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: '178623b5-1795-4dd4-884a-ea8209c3653a',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    script {
+                        sh """
+                            mkdir -p ~/.aws
+        
+                            echo "[default]" > ~/.aws/credentials
+                            echo "aws_access_key_id=${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+                            echo "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+        
+                            echo "[default]" > ~/.aws/config
+                            echo "region=${AWS_REGION}" >> ~/.aws/config
+                            echo "output=json" >> ~/.aws/config
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Create ECR Repository') {
+            steps {
+                script {
+                    sh '''
+                        aws ecr describe-repositories --repository-names ${ECR_REPO} || \
+                        aws ecr create-repository --repository-name ${ECR_REPO}
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    sh '''
+                        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
+                        aws ecr get-login-password --region ${AWS_REGION} | \
+                        docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+                        docker tag ${DOCKER_IMAGE}:latest $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
+
+                        docker push $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
+                    '''
+                }
+            }
+        }
     }
-    
+
     post {
-        always {
-            cleanWs() // Clean workspace after build
+        success {
+            echo '✅ Pipeline completed: Code cloned, image built, ECR created, image pushed!'
+        }
+        failure {
+            echo '❌ Something went wrong in the pipeline.'
         }
     }
 }

@@ -1,5 +1,8 @@
 /*
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f
 pipeline {
     agent any
 
@@ -94,6 +97,48 @@ pipeline {
 
 */
 
+<<<<<<< HEAD
+=======
+/*
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Git on EC2') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "sudo apt update && sudo apt install -y git"
+                        
+                        git -v
+                    '''
+                }
+            }
+        }
+    }
+}
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy Code to EC2') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "sudo rm -rf /var/www/html/* /var/www/html/.* 2>/dev/null || true"
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "sudo git clone https://github.com/chaudhary-prateek/Hotel-Management.git /var/www/html"
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "sudo chown -R www-data:www-data /var/www/html && sudo chmod -R 755 /var/www/html"
+                    '''
+                }
+            }
+        }
+    }
+}
+*/
+
+>>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f
 pipeline {
     agent any
 
@@ -127,4 +172,12 @@ pipeline {
             }
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+
+
+
+>>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f

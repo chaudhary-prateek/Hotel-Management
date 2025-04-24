@@ -216,7 +216,7 @@ pipeline {
 
         stage('Install PHP Extensions') {
             steps {
-                sshagent (credentials: ['your-ssh-credential-id']) {
+                sshagent (credentials: ['ec2-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 '
                             sudo apt update &&

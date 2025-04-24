@@ -220,12 +220,13 @@ pipeline {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 '
                             sudo apt update &&
-                            sudo apt install -y php-xml php-curl php-dom
+                            sudo apt install -y php-xml php-curl php-mbstring php-zip php-bcmath php-gd php-mysql unzip
                         '
                     '''
                 }
             }
         }
+
 
         stage('Laravel Setup') {
             steps {

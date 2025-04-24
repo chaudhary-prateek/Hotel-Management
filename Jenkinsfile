@@ -134,6 +134,8 @@ pipeline {
 // Jenkinsfile for deploying code to EC2 instance
 // This Jenkinsfile is designed to clone a Git repository and deploy the code to an EC2 instance
 
+/*
+
 pipeline {
     agent any
 
@@ -173,6 +175,75 @@ pipeline {
         }
         failure {
             echo '❌ Deployment failed.'
+        }
+    }
+}
+
+*/
+
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = ""
+    }
+
+    stages {
+        stage('Checkout Repo') {
+            steps {
+                checkout scm
+                script {
+                    REPO_URL = sh(script: "git config --get remote.origin.url", returnStdout: true).trim()
+                    echo "Repo URL is: ${REPO_URL}"
+                }
+            }
+        }
+
+        stage('Deploy Code to EC2') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            sudo rm -rf /var/www/html/* /var/www/html/.* 2>/dev/null || true &&
+                            sudo git clone ${REPO_URL} /var/www/html &&
+                            sudo chown -R www-data:www-data /var/www/html &&
+                            sudo chmod -R 755 /var/www/html
+                        "
+                    """
+                }
+            }
+        }
+
+        stage('Laravel Setup') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            cd /var/www/html &&
+                            composer install &&
+                            cp .env.example .env &&
+                            php artisan key:generate &&
+                            sudo chown -R www-data:www-data storage bootstrap/cache &&
+                            sudo chmod -R 775 storage bootstrap/cache
+                        "
+                    """
+                }
+            }
+        }
+
+        stage('Run Artisan Commands') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            cd /var/www/html &&
+                            php artisan config:clear &&
+                            php artisan cache:clear &&
+                            php artisan migrate --force
+                        "
+                    """
+                }
+            }
         }
     }
 }

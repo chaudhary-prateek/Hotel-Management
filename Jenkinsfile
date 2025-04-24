@@ -233,8 +233,9 @@ pipeline {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            sudo chown -R ubuntu:ubuntu /var/www/html &&
                             cd /var/www/html &&
-                            mkdir -p vendor &&
+                            mkdir -p vendor && 
                             composer install &&
                             cp .env.example .env &&
                             php artisan key:generate &&

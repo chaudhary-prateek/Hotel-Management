@@ -1,8 +1,4 @@
 /*
-<<<<<<< HEAD
-
-=======
->>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f
 pipeline {
     agent any
 
@@ -95,11 +91,8 @@ pipeline {
     }
 }
 
-*/
 
-<<<<<<< HEAD
-=======
-/*
+
 pipeline {
     agent any
 
@@ -138,7 +131,9 @@ pipeline {
 }
 */
 
->>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f
+// Jenkinsfile for deploying code to EC2 instance
+// This Jenkinsfile is designed to clone a Git repository and deploy the code to an EC2 instance
+
 pipeline {
     agent any
 
@@ -172,12 +167,13 @@ pipeline {
             }
         }
     }
-<<<<<<< HEAD
+<
+    post {
+        success {
+            echo '✅ Code deployed successfully!'
+        }
+        failure {
+            echo '❌ Deployment failed.'
+        }
+    }
 }
-=======
-}
-
-
-
-
->>>>>>> 1fb18f70d89a00059fe4d263a539028cd368c55f

@@ -358,7 +358,7 @@ EOF' &&
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 '
                             sudo chown -R www-data:www-data /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
                             sudo chmod -R 775 /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
                             sudo touch /var/www/html/hotelManagement/storage/logs/laravel.log &&
@@ -370,7 +370,7 @@ EOF' &&
                             php artisan view:clear &&
                             php artisan config:cache &&
                             php artisan migrate --force
-                        "
+                        '
                     """
                 }
             }

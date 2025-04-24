@@ -359,14 +359,17 @@ EOF' &&
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
-                        sudo chown -R www-data:www-data /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
-                        sudo chmod -R 775 /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
-                        cd /var/www/html/hotelManagement &&
-                        php artisan config:clear &&
-                        php artisan route:clear &&
-                        php artisan view:clear &&
-                        php artisan config:cache &&
-                        php artisan migrate --force
+                            sudo chown -R www-data:www-data /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
+                            sudo chmod -R 775 /var/www/html/hotelManagement/storage /var/www/html/hotelManagement/bootstrap/cache &&
+                            sudo touch /var/www/html/hotelManagement/storage/logs/laravel.log &&
+                            sudo chown www-data:www-data /var/www/html/hotelManagement/storage/logs/laravel.log &&
+                            sudo chmod 664 /var/www/html/hotelManagement/storage/logs/laravel.log &&
+                            cd /var/www/html/hotelManagement &&
+                            php artisan config:clear &&
+                            php artisan route:clear &&
+                            php artisan view:clear &&
+                            php artisan config:cache &&
+                            php artisan migrate --force
                         "
                     """
                 }

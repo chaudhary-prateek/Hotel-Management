@@ -181,6 +181,8 @@ pipeline {
 
 */
 
+/*
+
 pipeline {
     agent any
 
@@ -257,6 +259,110 @@ pipeline {
                             cd /var/www/html &&
                             php artisan config:clear &&
                             php artisan cache:clear &&
+                            php artisan migrate --force
+                        "
+                    """
+                }
+            }
+        }
+    }
+}
+
+
+*/
+
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = ""
+    }
+
+    stages {
+        stage('Checkout Repo') {
+            steps {
+                checkout scm
+                script {
+                    REPO_URL = sh(script: "git config --get remote.origin.url", returnStdout: true).trim()
+                    echo "Repo URL is: ${REPO_URL}"
+                }
+            }
+        }
+
+        stage('Deploy Code to EC2') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            sudo rm -rf /var/www/html/* /var/www/html/.* 2>/dev/null || true &&
+                            sudo git clone ${REPO_URL} /var/www/html/hotelManagement &&
+                            sudo chown -R www-data:www-data /var/www/html/hotelManagement &&
+                            sudo chmod -R 755 /var/www/html/hotelManagement
+                        "
+                    """
+                }
+            }
+        }
+
+        stage('Install PHP Extensions') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 '
+                            sudo apt update &&
+                            sudo apt install -y php php-cli php-xml php-curl php-mbstring php-zip php-bcmath php-gd php-mysql unzip apache2 libapache2-mod-php
+                        '
+                    '''
+                }
+            }
+        }
+
+        stage('Apache Config & Laravel Setup') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            # Update Apache to point to public folder
+                            sudo bash -c 'cat > /etc/apache2/sites-available/000-default.conf <<EOF
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/hotelManagement/public
+
+    <Directory /var/www/html/hotelManagement/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF' &&
+
+                            sudo a2enmod rewrite &&
+                            sudo systemctl restart apache2 &&
+
+                            # Laravel Setup
+                            cd /var/www/html/hotelManagement &&
+                            cp .env.example .env &&
+                            composer install &&
+                            php artisan key:generate &&
+                            sudo chown -R www-data:www-data storage bootstrap/cache &&
+                            sudo chmod -R 775 storage bootstrap/cache
+                        "
+                    """
+                }
+            }
+        }
+
+        stage('Run Artisan Commands') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            cd /var/www/html/hotelManagement &&
+                            php artisan config:clear &&
+                            php artisan route:clear &&
+                            php artisan view:clear &&
+                            php artisan config:cache &&
                             php artisan migrate --force
                         "
                     """

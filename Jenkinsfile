@@ -234,6 +234,7 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
                             cd /var/www/html &&
+                            mkdir -p vendor &&
                             composer install &&
                             cp .env.example .env &&
                             php artisan key:generate &&

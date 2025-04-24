@@ -252,6 +252,8 @@ pipeline {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
+                            sudo chown -R www-data:www-data /var/www/html/storage &&
+                            sudo chmod -R 775 /var/www/html/storage &&
                             cd /var/www/html &&
                             php artisan config:clear &&
                             php artisan cache:clear &&

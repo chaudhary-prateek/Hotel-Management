@@ -341,6 +341,7 @@ EOF' &&
                             sudo systemctl restart apache2 &&
 
                             # Laravel Setup
+                            sudo chown -R ubuntu:ubuntu /var/www/html/hotelManagement &&
                             cd /var/www/html/hotelManagement &&
                             cp .env.example .env &&
                             composer install &&

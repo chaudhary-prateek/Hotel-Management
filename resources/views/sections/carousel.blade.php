@@ -7,7 +7,7 @@
                     <div class="p-3" style="max-width: 700px;">
                         <h6 class="section-title text-white text-uppercase mb-3 animated slideInDown">Luxury
                             Living</h6>
-                        <h1 class="display-3 text-white mb-4 animated slideInDown">Discover A Brand Luxurious
+                        <h1 class="display-3 text-white mb-4 animated slideInDown"> Search Luxurious
                             Hotel</h1>
                         <a class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"
                            href="{{ route('rooms.index') }}">Book A Room</a>

@@ -406,23 +406,23 @@ pipeline {
             }
         }
 
-        stage('Laravel Update') {
-            steps {
-                sshagent (credentials: ['ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
-                            cd ${PROJECT_DIR} &&
-                            composer install --no-interaction --prefer-dist --optimize-autoloader &&
-                            php artisan migrate --force &&
-                            php artisan config:clear &&
-                            php artisan config:cache &&
-                            php artisan route:clear &&
-                            php artisan view:clear
-                        '
-                    """
-                }
-            }
-        }
+        // stage('Laravel Update') {
+        //     steps {
+        //         sshagent (credentials: ['ec2-ssh-key']) {
+        //             sh """
+        //                 ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
+        //                     cd ${PROJECT_DIR} &&
+        //                     composer install --no-interaction --prefer-dist --optimize-autoloader &&
+        //                     php artisan migrate --force &&
+        //                     php artisan config:clear &&
+        //                     php artisan config:cache &&
+        //                     php artisan route:clear &&
+        //                     php artisan view:clear
+        //                 '
+        //             """
+        //         }
+        //     }
+        // }
     }
 }
 

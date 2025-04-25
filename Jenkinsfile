@@ -425,8 +425,55 @@ pipeline {
 }
 
 
+/*
 
+pipeline {
+    agent any
 
+    environment {
+        EC2_HOST = '13.51.166.58'
+        EC2_USER = 'ubuntu'
+        PROJECT_DIR = '/var/www/html/hotelManagement'
+        SSH_CREDENTIALS_ID = 'ec2-ssh-key'
+    }
+
+    stages {
+        stage('Pull Latest Code') {
+            steps {
+                sshagent (credentials: [env.SSH_CREDENTIALS_ID]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_HOST} '
+                            cd ${env.PROJECT_DIR} &&
+                            git reset --hard &&
+                            git pull origin main &&
+                            composer install --no-interaction --prefer-dist --optimize-autoloader
+                        '
+                    """
+                }
+            }
+        }
+
+        stage('Laravel Maintenance & Cache') {
+            steps {
+                sshagent (credentials: [env.SSH_CREDENTIALS_ID]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_HOST} '
+                            cd ${env.PROJECT_DIR} &&
+                            php artisan down || true &&
+                            php artisan migrate --force &&
+                            php artisan config:clear &&
+                            php artisan route:clear &&
+                            php artisan view:clear &&
+                            php artisan config:cache &&
+                            php artisan up
+                        '
+                    """
+                }
+            }
+        }
+    }
+}
+*/
 
 
 

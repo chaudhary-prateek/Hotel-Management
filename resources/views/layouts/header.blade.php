@@ -11,11 +11,11 @@
                 <div class="col-lg-7 px-5 text-start">
                     <div class="h-100 d-inline-flex align-items-center py-2 me-4">
                         <i class="fa fa-envelope text-primary me-2"></i>
-                        <p class="mb-0">info@example.com</p>
+                        <p class="mb-0">Prateekchaudhary7805@gmail.com</p>
                     </div>
                     <div class="h-100 d-inline-flex align-items-center py-2">
                         <i class="fa fa-phone-alt text-primary me-2"></i>
-                        <p class="mb-0">+1514 345 6789</p>
+                        <p class="mb-0">+91 70608-05460</p>
                     </div>
                 </div>
                 <div class="col-lg-5 px-5 text-end">

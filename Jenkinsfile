@@ -407,8 +407,8 @@ pipeline {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
-                           
-                            sudo git pull origin main ${REPO_URL} /var/www/html/hotelManagement &&
+                            sudo rm -rf /var/www/html/* /var/www/html/.* 2>/dev/null || true &&
+                            sudo git pull ${REPO_URL} /var/www/html/hotelManagement &&
                             sudo chown -R www-data:www-data /var/www/html/hotelManagement &&
                             sudo chmod -R 755 /var/www/html/hotelManagement
                         "

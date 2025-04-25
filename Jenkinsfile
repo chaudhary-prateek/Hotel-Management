@@ -388,12 +388,13 @@ pipeline {
         REMOTE_USER = "ubuntu"
         REMOTE_HOST = "56.228.19.181"
         PROJECT_DIR = "/var/www/html/hotelManagement"
+        SSH_CREDENTIALS_ID = 'ec2-ssh-key'
     }
 
     stages {
         stage('Pull Latest Code') {
             steps {
-                sshagent (credentials: ['ec2-ssh-key']) {
+                sshagent (credentials: [env.SSH_CREDENTIALS_ID]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                             cd ${PROJECT_DIR} &&

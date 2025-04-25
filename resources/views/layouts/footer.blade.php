@@ -3,9 +3,9 @@
         <div class="row g-5">
             <div class="col-md-6 col-lg-5">
                 <h6 class="section-title text-start text-primary text-uppercase mb-4">Contact</h6>
-                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>H-106,Sector-63, Noida, UP</p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 7060805460</p>
+                <p class="mb-2"><i class="fa fa-envelope me-3"></i>Prateekchaudhary7805@gmail.com</p>
                 <div class="d-flex pt-2">
                     <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
                     <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>

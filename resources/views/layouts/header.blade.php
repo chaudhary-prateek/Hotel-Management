@@ -3,7 +3,7 @@
         <div class="col-lg-3 bg-dark d-none d-lg-block">
             <a href="{{ route('home') }}"
                class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-                <h1 class="m-0 text-primary text-uppercase">Star Hotel</h1>
+                <h1 class="m-0 text-primary text-uppercase">JAAT Hotel</h1>
             </a>
         </div>
         <div class="col-lg-9">
@@ -15,14 +15,14 @@
                     </div>
                     <div class="h-100 d-inline-flex align-items-center py-2">
                         <i class="fa fa-phone-alt text-primary me-2"></i>
-                        <p class="mb-0">+91 70608-05460</p>
+                        <p class="mb-0">+91 7060805460</p>
                     </div>
                 </div>
                 <div class="col-lg-5 px-5 text-end">
                     <div class="d-inline-flex align-items-center py-2">
                         <a class="me-3" href=""><i class="fab fa-facebook-f"></i></a>
                         <a class="me-3" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="me-3" href=""><i class="fab fa-linkedin-in"></i></a>
+                        <a class="me-3" href="https://www.linkedin.com/in/prateek-chaudhary-/"><i class="fab fa-linkedin-in"></i></a>
                         <a class="me-3" href=""><i class="fab fa-instagram"></i></a>
                         <a class="" href=""><i class="fab fa-youtube"></i></a>
                     </div>

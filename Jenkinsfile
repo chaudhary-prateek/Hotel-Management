@@ -383,7 +383,7 @@ EOF' &&
 */
 
 
-
+/*
 pipeline {
     agent any
 
@@ -429,7 +429,7 @@ pipeline {
                 }
             }
         }
-*/
+
         stage('Install PHP Extensions') {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
@@ -501,7 +501,7 @@ EOF' &&
 }
 
 
-/*
+*/
 
 pipeline {
     agent any
@@ -545,5 +545,3 @@ pipeline {
         }
     }
 }
-
-*/

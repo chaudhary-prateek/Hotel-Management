@@ -271,7 +271,7 @@ pipeline {
 
 */
 
-
+/*
 pipeline {
     agent any
 
@@ -378,6 +378,59 @@ EOF' &&
         }
     }
 }
+
+*/
+
+pipeline {
+    agent any
+
+    environment {
+        REMOTE_USER = "ubuntu"
+        REMOTE_HOST = "56.228.19.181"
+        PROJECT_DIR = "/var/www/html/hotelManagement"
+    }
+
+    stages {
+        stage('Pull Latest Code') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
+                            cd ${PROJECT_DIR} &&
+                            git pull origin main
+                        '
+                    """
+                }
+            }
+        }
+
+        stage('Laravel Update') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
+                            cd ${PROJECT_DIR} &&
+                            composer install --no-interaction --prefer-dist --optimize-autoloader &&
+                            php artisan migrate --force &&
+                            php artisan config:clear &&
+                            php artisan config:cache &&
+                            php artisan route:clear &&
+                            php artisan view:clear
+                        '
+                    """
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -498,49 +551,4 @@ EOF' &&
     }
 }
 
-
-/*
-
-pipeline {
-    agent any
-
-    environment {
-        REMOTE_USER = "ubuntu"
-        REMOTE_HOST = "56.228.19.181"
-        PROJECT_DIR = "/var/www/html/hotelManagement"
-    }
-
-    stages {
-        stage('Pull Latest Code') {
-            steps {
-                sshagent (credentials: ['ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
-                            cd ${PROJECT_DIR} &&
-                            git pull origin main
-                        '
-                    """
-                }
-            }
-        }
-
-        stage('Laravel Update') {
-            steps {
-                sshagent (credentials: ['ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
-                            cd ${PROJECT_DIR} &&
-                            composer install --no-interaction --prefer-dist --optimize-autoloader &&
-                            php artisan migrate --force &&
-                            php artisan config:clear &&
-                            php artisan config:cache &&
-                            php artisan route:clear &&
-                            php artisan view:clear
-                        '
-                    """
-                }
-            }
-        }
-    }
-}
 */

@@ -389,6 +389,9 @@ pipeline {
 
     environment {
         REPO_URL = ""
+        REMOTE_USER = "ubuntu"
+        REMOTE_HOST = "56.228.19.181"
+        PROJECT_DIR = "/var/www/html/hotelManagement"
     }
 
     stages {

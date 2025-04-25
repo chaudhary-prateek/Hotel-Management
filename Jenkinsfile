@@ -389,9 +389,6 @@ pipeline {
 
     environment {
         REPO_URL = ""
-        REMOTE_USER = "ubuntu"
-        REMOTE_HOST = "56.228.19.181"
-        PROJECT_DIR = "/var/www/html/hotelManagement"
     }
 
     stages {
@@ -404,14 +401,14 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Deploy Code to EC2') {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@56.228.19.181 "
-                            sudo rm -rf /var/www/html/* /var/www/html/.* 2>/dev/null || true &&
-                            sudo git clone ${REPO_URL} /var/www/html/hotelManagement &&
+                            cd ${PROJECT_DIR} &&
+                            git pull origin main
                             sudo chown -R www-data:www-data /var/www/html/hotelManagement &&
                             sudo chmod -R 755 /var/www/html/hotelManagement
                         "
@@ -419,7 +416,7 @@ pipeline {
                 }
             }
         }
-*/
+/*        
         stage('Pull Latest Code') {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
@@ -432,7 +429,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Install PHP Extensions') {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {

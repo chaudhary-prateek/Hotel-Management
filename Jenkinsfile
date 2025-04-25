@@ -397,6 +397,8 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '
                             cd ${PROJECT_DIR} &&
+                            sudo git reset --hard HEAD &&
+                            sudo git clean -fd &&
                             git pull origin main
                         '
                     """

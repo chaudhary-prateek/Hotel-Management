@@ -272,7 +272,6 @@ pipeline {
 */
 
 
-/*
 pipeline {
     agent any
 
@@ -501,7 +500,7 @@ EOF' &&
 }
 
 
-*/
+/*
 
 pipeline {
     agent any
@@ -545,3 +544,4 @@ pipeline {
         }
     }
 }
+*/

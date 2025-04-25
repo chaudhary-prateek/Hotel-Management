@@ -385,7 +385,7 @@ pipeline {
     agent any
 
     environment {
-        REMOTE_USER = "ubuntu"
+        REMOTE_USER = "ubunt"
         REMOTE_HOST = "56.228.19.181"
         PROJECT_DIR = "/var/www/html/hotelManagement"
         SSH_CREDENTIALS_ID = 'ec2-ssh-key'

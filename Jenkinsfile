@@ -609,7 +609,7 @@ pipeline {
         REMOTE_USER = "ubuntu"
         REMOTE_HOST = "13.48.45.28"
         PROJECT_DIR = "/var/www/html/hotelManagement"
-        SSH_CREDENTIALS_ID = 'ec2-ssh-key'
+        SSH_CREDENTIALS_ID = 'demo'
     }
 
     stages {
